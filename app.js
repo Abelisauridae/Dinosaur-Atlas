@@ -68,6 +68,7 @@ let mapScene;
 let mapGridLayer;
 let mapLandLayer;
 let mapPointLayer;
+const activeMapPointers = new Map();
 
 window.handleAtlasImageError = (image) => {
   const fallback = image.dataset.fallbackUrl;
@@ -738,6 +739,48 @@ function getSvgPoint(event) {
   };
 }
 
+function screenPointToWorld(point, transform = state.mapTransform) {
+  return {
+    x: (point.x - transform.tx) / transform.scale,
+    y: (point.y - transform.ty) / transform.scale,
+  };
+}
+
+function getPointerDistance(first, second) {
+  return Math.hypot(first.x - second.x, first.y - second.y);
+}
+
+function getPointerCenter(first, second) {
+  return {
+    x: (first.x + second.x) / 2,
+    y: (first.y + second.y) / 2,
+  };
+}
+
+function beginPanGesture(pointerId, point) {
+  state.drag = {
+    mode: "pan",
+    pointerId,
+    startPoint: point,
+    startTransform: { ...state.mapTransform },
+  };
+  elements.atlasMap.classList.add("is-dragging");
+}
+
+function beginPinchGesture() {
+  const [first, second] = Array.from(activeMapPointers.values()).slice(0, 2);
+  if (!first || !second) return;
+
+  const startCenter = getPointerCenter(first, second);
+  state.drag = {
+    mode: "pinch",
+    startDistance: Math.max(getPointerDistance(first, second), 1),
+    startTransform: { ...state.mapTransform },
+    startWorldCenter: screenPointToWorld(startCenter),
+  };
+  elements.atlasMap.classList.add("is-dragging");
+}
+
 function applyMapTransform() {
   const { scale, tx, ty } = state.mapTransform;
   mapScene.setAttribute("transform", `matrix(${scale} 0 0 ${scale} ${tx} ${ty})`);
@@ -1001,31 +1044,83 @@ function attachMapEvents() {
   );
 
   elements.atlasMap.addEventListener("pointerdown", (event) => {
-    state.drag = {
-      pointerId: event.pointerId,
-      startPoint: getSvgPoint(event),
-      startTransform: { ...state.mapTransform },
-    };
-    elements.atlasMap.classList.add("is-dragging");
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    const point = getSvgPoint(event);
+    activeMapPointers.set(event.pointerId, point);
     elements.atlasMap.setPointerCapture(event.pointerId);
     hideTooltip();
+
+    if (activeMapPointers.size >= 2) {
+      beginPinchGesture();
+      return;
+    }
+
+    beginPanGesture(event.pointerId, point);
   });
 
   elements.atlasMap.addEventListener("pointermove", (event) => {
-    if (!state.drag || state.drag.pointerId !== event.pointerId) return;
+    if (!activeMapPointers.has(event.pointerId)) return;
+
     const point = getSvgPoint(event);
-    state.mapTransform.tx =
-      state.drag.startTransform.tx + (point.x - state.drag.startPoint.x);
-    state.mapTransform.ty =
-      state.drag.startTransform.ty + (point.y - state.drag.startPoint.y);
+    activeMapPointers.set(event.pointerId, point);
+
+    if (activeMapPointers.size >= 2) {
+      if (!state.drag || state.drag.mode !== "pinch") {
+        beginPinchGesture();
+      }
+
+      const [first, second] = Array.from(activeMapPointers.values()).slice(0, 2);
+      const center = getPointerCenter(first, second);
+      const distance = Math.max(getPointerDistance(first, second), 1);
+      const scaleFactor = distance / state.drag.startDistance;
+      const nextScale = Math.max(
+        ZOOM_MIN,
+        Math.min(ZOOM_MAX, state.drag.startTransform.scale * scaleFactor)
+      );
+
+      state.mapTransform.scale = nextScale;
+      state.mapTransform.tx = center.x - state.drag.startWorldCenter.x * nextScale;
+      state.mapTransform.ty = center.y - state.drag.startWorldCenter.y * nextScale;
+      applyMapTransform();
+      return;
+    }
+
+    if (!state.drag || state.drag.mode !== "pan" || state.drag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    state.mapTransform.tx = state.drag.startTransform.tx + (point.x - state.drag.startPoint.x);
+    state.mapTransform.ty = state.drag.startTransform.ty + (point.y - state.drag.startPoint.y);
     applyMapTransform();
   });
 
-  ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
-    elements.atlasMap.addEventListener(eventName, () => {
+  const finishPointer = (event) => {
+    activeMapPointers.delete(event.pointerId);
+
+    if (!activeMapPointers.size) {
       state.drag = null;
       elements.atlasMap.classList.remove("is-dragging");
-    });
+      return;
+    }
+
+    if (activeMapPointers.size >= 2) {
+      beginPinchGesture();
+      return;
+    }
+
+    const [[pointerId, point]] = activeMapPointers.entries();
+    beginPanGesture(pointerId, point);
+  };
+
+  ["pointerup", "pointercancel"].forEach((eventName) => {
+    elements.atlasMap.addEventListener(eventName, finishPointer);
+  });
+
+  elements.atlasMap.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse" && activeMapPointers.has(event.pointerId)) {
+      finishPointer(event);
+    }
   });
 }
 
