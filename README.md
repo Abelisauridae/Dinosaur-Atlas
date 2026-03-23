@@ -1,29 +1,21 @@
 # Dinosaur Atlas
 
-GitHub-ready package for the Dinosaur Atlas prototype.
+Static dinosaur atlas app built from PBDB occurrence data plus supplemental size enrichment.
 
-This folder contains the static site, generated data, image fallbacks, and the rebuild script used to regenerate the dataset.
+Each species record includes a generated description summary, and exact World Dinosaur Dataset matches can also contribute a short supplemental note.
+Each species also includes image metadata that points to a local family-aware silhouette.
 
-## What is included
+## Open the app
 
-- `index.html` - app entry point
-- `app.js` - client-side app logic
-- `styles.css` - layout and visual design
-- `data/` - generated dinosaur database plus land geometry
-- `images/fallbacks/` - family-aware dinosaur silhouette fallbacks
-- `scripts/build_dinosaur_data.py` - dataset rebuild script
-- `data/raw/` - cached source exports used by the generator
-
-## Open the app locally
-
-Open `index.html` in a browser.
+Open `index.html` in a browser. The data is loaded from local JavaScript files, so it does not require a local dev server just to view it.
 
 ## Rebuild the database
 
-Run:
+1. Refresh the raw source cache in `data/raw` if you want newer source exports.
+2. Run:
 
 ```bash
-python3 scripts/build_dinosaur_data.py
+python3 dinosaur-atlas/scripts/build_dinosaur_data.py
 ```
 
 The generator writes:
@@ -40,9 +32,11 @@ The generator writes:
 - 4,733 aggregated fossil localities
 - 296 exact size matches
 - 140 genus-proxy size matches
-- image coverage for all 1,855 species through matched artwork or family-aware local fallbacks
+- image coverage for all 1,855 species through local family-aware silhouettes
 
-## Publish help
+## Sources
 
-- GitHub repo and GitHub Pages steps: `GITHUB_SETUP.md`
-- Apple App Store planning notes: `APPLE_APP_STORE_PLAN.md`
+- PBDB taxonomic names API for accepted species and taxonomy
+- PBDB fossil occurrences API for coordinates and interval data
+- World Dinosaur Dataset for length, weight, and dinosaur type enrichment
+- Natural Earth 1:110m land polygons for the map backdrop
