@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #f5ecda;
   --bg-deep: #d9c49a;
   --panel: rgba(248, 242, 229, 0.92);
@@ -12,14 +13,120 @@
   --map-water: #d6e6e0;
   --map-land: #9ab59d;
   --map-stroke: rgba(43, 32, 20, 0.22);
+  --map-grid: rgba(43, 32, 20, 0.12);
   --map-point: rgba(159, 79, 42, 0.62);
   --map-point-selected: #191410;
+  --map-point-ring: rgba(255, 255, 255, 0.88);
+  --map-empty-text: rgba(43, 32, 20, 0.68);
   --shadow: 0 24px 48px rgba(66, 44, 18, 0.12);
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 12px;
   --display-font: "Avenir Next Condensed", "Arial Narrow", "Trebuchet MS", sans-serif;
   --body-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --page-bg:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 30%),
+    linear-gradient(135deg, #f8efdf 0%, #ead7af 42%, #dfc18a 100%);
+  --shell-bg:
+    radial-gradient(circle at top right, rgba(108, 146, 133, 0.18), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(159, 79, 42, 0.14), transparent 24%);
+  --hero-glow: radial-gradient(circle, rgba(159, 79, 42, 0.17), transparent 68%);
+  --code-bg: rgba(159, 79, 42, 0.1);
+  --stat-bg: linear-gradient(180deg, rgba(255, 250, 242, 0.92), rgba(231, 214, 182, 0.75));
+  --stat-border: rgba(75, 57, 28, 0.1);
+  --field-border: rgba(75, 57, 28, 0.16);
+  --field-bg: rgba(255, 251, 245, 0.92);
+  --focus-ring: rgba(159, 79, 42, 0.35);
+  --button-border: rgba(75, 57, 28, 0.14);
+  --button-bg: rgba(255, 251, 245, 0.88);
+  --button-border-hover: rgba(125, 49, 23, 0.35);
+  --button-bg-hover: rgba(255, 253, 249, 1);
+  --species-card-border: rgba(75, 57, 28, 0.12);
+  --species-card-bg: linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(238, 228, 203, 0.84));
+  --species-card-hover-shadow: 0 10px 20px rgba(73, 54, 27, 0.1);
+  --species-card-selected-border: rgba(125, 49, 23, 0.52);
+  --species-card-selected-bg: linear-gradient(180deg, rgba(255, 244, 235, 0.98), rgba(237, 210, 182, 0.9));
+  --image-surface: rgba(255, 250, 244, 0.92);
+  --map-shell-bg:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.45), transparent 28%),
+    linear-gradient(180deg, #eef5f0 0%, var(--map-water) 100%);
+  --map-shell-border: rgba(75, 57, 28, 0.12);
+  --tooltip-bg: rgba(29, 22, 15, 0.94);
+  --tooltip-text: #fff8f0;
+  --tooltip-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
+  --detail-media-border: rgba(75, 57, 28, 0.12);
+  --detail-media-bg: rgba(255, 249, 241, 0.94);
+  --fact-card-bg: linear-gradient(180deg, rgba(247, 239, 225, 0.96), rgba(233, 220, 193, 0.78));
+  --fact-card-border: rgba(75, 57, 28, 0.1);
+  --note-bg: rgba(159, 79, 42, 0.08);
+  --note-border: rgba(159, 79, 42, 0.12);
+  --locality-bg: rgba(247, 240, 227, 0.9);
+  --locality-border: rgba(75, 57, 28, 0.1);
+  --empty-bg: rgba(255, 252, 246, 0.8);
+  --empty-border: rgba(75, 57, 28, 0.2);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #15110d;
+  --bg-deep: #2f2218;
+  --panel: rgba(27, 22, 18, 0.92);
+  --panel-strong: rgba(22, 18, 15, 0.96);
+  --line: rgba(224, 204, 175, 0.14);
+  --text: #f2e4d1;
+  --text-muted: #c8b59a;
+  --accent: #d78252;
+  --accent-strong: #f0ae7d;
+  --accent-soft: rgba(215, 130, 82, 0.16);
+  --map-water: #1f3739;
+  --map-land: #56735f;
+  --map-stroke: rgba(239, 223, 199, 0.18);
+  --map-grid: rgba(239, 223, 199, 0.1);
+  --map-point: rgba(218, 120, 69, 0.72);
+  --map-point-selected: #f8e6c7;
+  --map-point-ring: rgba(16, 13, 10, 0.78);
+  --map-empty-text: rgba(242, 228, 209, 0.74);
+  --shadow: 0 28px 60px rgba(4, 3, 2, 0.38);
+  --page-bg:
+    radial-gradient(circle at top left, rgba(232, 188, 145, 0.08), transparent 28%),
+    linear-gradient(145deg, #100d0b 0%, #1a1410 40%, #231a14 100%);
+  --shell-bg:
+    radial-gradient(circle at top right, rgba(83, 122, 112, 0.14), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(215, 130, 82, 0.1), transparent 24%);
+  --hero-glow: radial-gradient(circle, rgba(215, 130, 82, 0.18), transparent 68%);
+  --code-bg: rgba(215, 130, 82, 0.14);
+  --stat-bg: linear-gradient(180deg, rgba(40, 31, 25, 0.96), rgba(57, 43, 33, 0.82));
+  --stat-border: rgba(224, 204, 175, 0.1);
+  --field-border: rgba(224, 204, 175, 0.14);
+  --field-bg: rgba(33, 27, 23, 0.94);
+  --focus-ring: rgba(240, 174, 125, 0.42);
+  --button-border: rgba(224, 204, 175, 0.14);
+  --button-bg: rgba(38, 31, 26, 0.9);
+  --button-border-hover: rgba(240, 174, 125, 0.3);
+  --button-bg-hover: rgba(49, 39, 32, 0.96);
+  --species-card-border: rgba(224, 204, 175, 0.1);
+  --species-card-bg: linear-gradient(180deg, rgba(34, 27, 23, 0.98), rgba(52, 41, 33, 0.88));
+  --species-card-hover-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+  --species-card-selected-border: rgba(240, 174, 125, 0.42);
+  --species-card-selected-bg: linear-gradient(180deg, rgba(60, 38, 27, 0.98), rgba(78, 50, 36, 0.9));
+  --image-surface: rgba(43, 35, 29, 0.94);
+  --map-shell-bg:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 28%),
+    linear-gradient(180deg, #223032 0%, var(--map-water) 100%);
+  --map-shell-border: rgba(224, 204, 175, 0.12);
+  --tooltip-bg: rgba(10, 9, 8, 0.96);
+  --tooltip-text: #f5e8d8;
+  --tooltip-shadow: 0 18px 34px rgba(0, 0, 0, 0.42);
+  --detail-media-border: rgba(224, 204, 175, 0.1);
+  --detail-media-bg: rgba(34, 27, 22, 0.96);
+  --fact-card-bg: linear-gradient(180deg, rgba(39, 31, 26, 0.96), rgba(58, 45, 35, 0.84));
+  --fact-card-border: rgba(224, 204, 175, 0.1);
+  --note-bg: rgba(215, 130, 82, 0.1);
+  --note-border: rgba(215, 130, 82, 0.18);
+  --locality-bg: rgba(39, 31, 26, 0.9);
+  --locality-border: rgba(224, 204, 175, 0.08);
+  --empty-bg: rgba(30, 25, 21, 0.86);
+  --empty-border: rgba(224, 204, 175, 0.18);
 }
 
 * {
@@ -27,15 +134,14 @@
 }
 
 html {
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 30%),
-    linear-gradient(135deg, #f8efdf 0%, #ead7af 42%, #dfc18a 100%);
+  background: var(--page-bg);
   color: var(--text);
   font-family: var(--body-font);
 }
 
 body {
   margin: 0;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 button,
@@ -47,9 +153,7 @@ select {
 .page-shell {
   min-height: 100vh;
   padding: 28px;
-  background:
-    radial-gradient(circle at top right, rgba(108, 146, 133, 0.18), transparent 26%),
-    radial-gradient(circle at bottom left, rgba(159, 79, 42, 0.14), transparent 24%);
+  background: var(--shell-bg);
 }
 
 .hero,
@@ -81,8 +185,15 @@ select {
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(159, 79, 42, 0.17), transparent 68%);
+  background: var(--hero-glow);
   pointer-events: none;
+}
+
+.hero-topbar {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .eyebrow,
@@ -122,7 +233,7 @@ select {
 .sources-panel code {
   padding: 0.15rem 0.38rem;
   border-radius: 999px;
-  background: rgba(159, 79, 42, 0.1);
+  background: var(--code-bg);
   color: var(--accent-strong);
   font-size: 0.92em;
 }
@@ -144,8 +255,8 @@ select {
 .stat-card {
   padding: 18px;
   border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255, 250, 242, 0.92), rgba(231, 214, 182, 0.75));
-  border: 1px solid rgba(75, 57, 28, 0.1);
+  background: var(--stat-bg);
+  border: 1px solid var(--stat-border);
 }
 
 .stat-card strong {
@@ -184,9 +295,9 @@ select {
 .field select {
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid rgba(75, 57, 28, 0.16);
+  border: 1px solid var(--field-border);
   border-radius: 14px;
-  background: rgba(255, 251, 245, 0.92);
+  background: var(--field-bg);
   color: var(--text);
 }
 
@@ -194,7 +305,7 @@ select {
 .field select:focus,
 .ghost-button:focus,
 .species-item:focus {
-  outline: 2px solid rgba(159, 79, 42, 0.35);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -224,8 +335,8 @@ select {
   min-height: 40px;
   padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid rgba(75, 57, 28, 0.14);
-  background: rgba(255, 251, 245, 0.88);
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
   color: var(--text);
   cursor: pointer;
   transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
@@ -233,8 +344,13 @@ select {
 
 .ghost-button:hover {
   transform: translateY(-1px);
-  border-color: rgba(125, 49, 23, 0.35);
-  background: rgba(255, 253, 249, 1);
+  border-color: var(--button-border-hover);
+  background: var(--button-bg-hover);
+}
+
+.theme-toggle {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ghost-button:disabled {
@@ -261,8 +377,8 @@ select {
   gap: 8px;
   padding: 16px;
   border-radius: 18px;
-  border: 1px solid rgba(75, 57, 28, 0.12);
-  background: linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(238, 228, 203, 0.84));
+  border: 1px solid var(--species-card-border);
+  background: var(--species-card-bg);
   cursor: pointer;
   text-align: left;
   transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
@@ -281,8 +397,8 @@ select {
   object-fit: cover;
   object-position: center;
   border-radius: 16px;
-  border: 1px solid rgba(75, 57, 28, 0.12);
-  background: rgba(255, 250, 244, 0.92);
+  border: 1px solid var(--species-card-border);
+  background: var(--image-surface);
 }
 
 .species-thumb.is-fallback,
@@ -294,13 +410,13 @@ select {
 
 .species-item:hover {
   transform: translateY(-2px);
-  border-color: rgba(125, 49, 23, 0.26);
-  box-shadow: 0 10px 20px rgba(73, 54, 27, 0.1);
+  border-color: var(--button-border-hover);
+  box-shadow: var(--species-card-hover-shadow);
 }
 
 .species-item.is-selected {
-  border-color: rgba(125, 49, 23, 0.52);
-  background: linear-gradient(180deg, rgba(255, 244, 235, 0.98), rgba(237, 210, 182, 0.9));
+  border-color: var(--species-card-selected-border);
+  background: var(--species-card-selected-bg);
 }
 
 .species-item h3 {
@@ -369,10 +485,8 @@ select {
   position: relative;
   border-radius: 24px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.45), transparent 28%),
-    linear-gradient(180deg, #eef5f0 0%, var(--map-water) 100%);
-  border: 1px solid rgba(75, 57, 28, 0.12);
+  background: var(--map-shell-bg);
+  border: 1px solid var(--map-shell-border);
 }
 
 #atlas-map {
@@ -395,9 +509,9 @@ select {
   max-width: 260px;
   padding: 12px 14px;
   border-radius: 14px;
-  background: rgba(29, 22, 15, 0.94);
-  color: #fff8f0;
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.22);
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  box-shadow: var(--tooltip-shadow);
   pointer-events: none;
   font-size: 0.9rem;
   line-height: 1.45;
@@ -444,8 +558,8 @@ select {
 .detail-hero-media {
   border-radius: 22px;
   overflow: hidden;
-  border: 1px solid rgba(75, 57, 28, 0.12);
-  background: rgba(255, 249, 241, 0.94);
+  border: 1px solid var(--detail-media-border);
+  background: var(--detail-media-bg);
 }
 
 .detail-image {
@@ -473,8 +587,8 @@ select {
 .fact-card {
   padding: 14px;
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(247, 239, 225, 0.96), rgba(233, 220, 193, 0.78));
-  border: 1px solid rgba(75, 57, 28, 0.1);
+  background: var(--fact-card-bg);
+  border: 1px solid var(--fact-card-border);
 }
 
 .fact-card span {
@@ -500,8 +614,8 @@ select {
   margin: 0;
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(159, 79, 42, 0.08);
-  border: 1px solid rgba(159, 79, 42, 0.12);
+  background: var(--note-bg);
+  border: 1px solid var(--note-border);
   color: var(--text-muted);
   line-height: 1.55;
 }
@@ -538,8 +652,8 @@ select {
 .locality-item {
   padding: 14px;
   border-radius: 16px;
-  background: rgba(247, 240, 227, 0.9);
-  border: 1px solid rgba(75, 57, 28, 0.1);
+  background: var(--locality-bg);
+  border: 1px solid var(--locality-border);
 }
 
 .locality-item strong {
@@ -566,8 +680,8 @@ select {
 .empty-state {
   padding: 20px;
   border-radius: 20px;
-  background: rgba(255, 252, 246, 0.8);
-  border: 1px dashed rgba(75, 57, 28, 0.2);
+  background: var(--empty-bg);
+  border: 1px dashed var(--empty-border);
 }
 
 @media (max-width: 1180px) {
@@ -607,6 +721,15 @@ select {
 
   .panel-heading {
     flex-direction: column;
+  }
+
+  .hero-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .theme-toggle {
+    width: fit-content;
   }
 
   .map-actions {

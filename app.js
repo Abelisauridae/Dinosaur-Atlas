@@ -3,10 +3,7 @@ const MAP_HEIGHT = 520;
 const MAX_LIST_ITEMS = 240;
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 10;
-const MAP_LAND_FILL = "#9ab59d";
-const MAP_LAND_STROKE = "rgba(43,32,20,0.22)";
-const MAP_POINT_FILL = "rgba(159,79,42,0.62)";
-const MAP_POINT_SELECTED_FILL = "#191410";
+const THEME_STORAGE_KEY = "dinosaur-atlas-theme";
 
 const data = window.DINOSAUR_ATLAS_DATA;
 const world = window.DINOSAUR_ATLAS_WORLD;
@@ -41,10 +38,12 @@ const state = {
   mapTransform: { scale: 1, tx: 0, ty: 0 },
   drag: null,
   lastMapBounds: null,
+  theme: "light",
 };
 
 const elements = {
   heroStats: document.querySelector("#hero-stats"),
+  themeToggleButton: document.querySelector("#theme-toggle-button"),
   searchInput: document.querySelector("#search-input"),
   cladeFilter: document.querySelector("#clade-filter"),
   familyFilter: document.querySelector("#family-filter"),
@@ -69,6 +68,69 @@ let mapGridLayer;
 let mapLandLayer;
 let mapPointLayer;
 const activeMapPointers = new Map();
+
+function getStoredTheme() {
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return stored === "dark" || stored === "light" ? stored : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function getPreferredTheme() {
+  const stored = getStoredTheme();
+  if (stored) return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function getThemeColor(token, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  return value || fallback;
+}
+
+function getMapThemeColors() {
+  return {
+    landFill: getThemeColor("--map-land", "#9ab59d"),
+    landStroke: getThemeColor("--map-stroke", "rgba(43,32,20,0.22)"),
+    gridStroke: getThemeColor("--map-grid", "rgba(43,32,20,0.12)"),
+    pointFill: getThemeColor("--map-point", "rgba(159,79,42,0.62)"),
+    pointSelectedFill: getThemeColor("--map-point-selected", "#191410"),
+    pointRing: getThemeColor("--map-point-ring", "rgba(255,255,255,0.88)"),
+    emptyText: getThemeColor("--map-empty-text", "rgba(43,32,20,0.68)"),
+  };
+}
+
+function syncThemeToggle() {
+  const isDark = state.theme === "dark";
+  elements.themeToggleButton.textContent = `Dark mode: ${isDark ? "On" : "Off"}`;
+  elements.themeToggleButton.setAttribute("aria-pressed", String(isDark));
+  elements.themeToggleButton.setAttribute(
+    "aria-label",
+    isDark ? "Switch to light mode" : "Switch to dark mode"
+  );
+  elements.themeToggleButton.title = isDark ? "Switch to light mode" : "Switch to dark mode";
+}
+
+function applyTheme(nextTheme, { persist = true, rebuildMap = true } = {}) {
+  state.theme = nextTheme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = state.theme;
+
+  if (persist) {
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, state.theme);
+    } catch (error) {
+      // Ignore storage failures and keep the in-memory theme.
+    }
+  }
+
+  syncThemeToggle();
+
+  if (rebuildMap && mapScene) {
+    renderMapBase();
+    render();
+  }
+}
 
 window.handleAtlasImageError = (image) => {
   const fallback = image.dataset.fallbackUrl;
@@ -557,13 +619,7 @@ function renderDetailPanel(filtered, selected) {
       </article>
       <article class="fact-card">
         <span>Image source</span>
-        <strong>${escapeHtml(
-          selected.image.kind === "exact"
-            ? "Exact artwork match"
-            : selected.image.kind === "genus_proxy"
-              ? "Genus-level artwork proxy"
-              : "Local silhouette fallback"
-        )}</strong>
+        <strong>Local family silhouette</strong>
       </article>
     </div>
     <div class="chips">${taxonomyChips}</div>
@@ -596,7 +652,7 @@ function renderSourcesPanel() {
       ${escapeHtml(formatNumber(data.metadata.mappedSpeciesCount))} of which have at least one mapped PBDB locality.
       Size enrichment exists for ${escapeHtml(
         formatNumber(data.metadata.sizeExactCount + data.metadata.sizeGenusProxyCount)
-      )} species through direct or genus-level matching, and image references exist for all species through exact art, genus-level proxies, or local fallbacks.
+      )} species through direct or genus-level matching, and every species is illustrated with a local family-aware silhouette.
     </p>
     <ul>${notes}</ul>
     <div class="source-list">${sources}</div>
@@ -673,6 +729,7 @@ function getBoundsFromPoints(points) {
 }
 
 function renderMapBase() {
+  const mapColors = getMapThemeColors();
   elements.atlasMap.innerHTML = "";
   mapScene = createSvgElement("g");
   mapGridLayer = createSvgElement("g");
@@ -691,7 +748,7 @@ function renderMapBase() {
         y1: start.y,
         x2: end.x,
         y2: end.y,
-        stroke: "rgba(43,32,20,0.12)",
+        stroke: mapColors.gridStroke,
         "stroke-width": 1,
         "stroke-dasharray": "6 8",
       })
@@ -707,7 +764,7 @@ function renderMapBase() {
         y1: start.y,
         x2: end.x,
         y2: end.y,
-        stroke: "rgba(43,32,20,0.12)",
+        stroke: mapColors.gridStroke,
         "stroke-width": 1,
         "stroke-dasharray": "6 8",
       })
@@ -718,8 +775,8 @@ function renderMapBase() {
     mapLandLayer.append(
       createSvgElement("path", {
         d: geometryToPath(feature.geometry),
-        fill: MAP_LAND_FILL,
-        stroke: MAP_LAND_STROKE,
+        fill: mapColors.landFill,
+        stroke: mapColors.landStroke,
         "stroke-width": 1.1,
         "vector-effect": "non-scaling-stroke",
       })
@@ -838,6 +895,7 @@ function showTooltip(event, html) {
 }
 
 function renderMapPoints(filtered, selected) {
+  const mapColors = getMapThemeColors();
   mapPointLayer.innerHTML = "";
 
   let points = [];
@@ -867,7 +925,7 @@ function renderMapPoints(filtered, selected) {
       x: 500,
       y: 255,
       "text-anchor": "middle",
-      fill: "rgba(43,32,20,0.68)",
+      fill: mapColors.emptyText,
       "font-size": 22,
     });
     textNode.textContent = selected
@@ -904,8 +962,8 @@ function renderMapPoints(filtered, selected) {
       cx: projected.x,
       cy: projected.y,
       r: radius.toFixed(2),
-      fill: point.kind === "selection" ? MAP_POINT_SELECTED_FILL : MAP_POINT_FILL,
-      stroke: "rgba(255,255,255,0.88)",
+      fill: point.kind === "selection" ? mapColors.pointSelectedFill : mapColors.pointFill,
+      stroke: mapColors.pointRing,
       "stroke-width": 1.4,
       "vector-effect": "non-scaling-stroke",
     });
@@ -985,6 +1043,10 @@ function render() {
 }
 
 function attachControlEvents() {
+  elements.themeToggleButton.addEventListener("click", () => {
+    applyTheme(state.theme === "dark" ? "light" : "dark");
+  });
+
   elements.searchInput.addEventListener("input", (event) => {
     state.search = event.target.value;
     render();
@@ -1125,6 +1187,10 @@ function attachMapEvents() {
 }
 
 function init() {
+  applyTheme(document.documentElement.dataset.theme || getPreferredTheme(), {
+    persist: false,
+    rebuildMap: false,
+  });
   populateFilterSelect(elements.cladeFilter, "clades", getDistinctValues((item) => item.majorClade));
   populateFilterSelect(elements.familyFilter, "families", getDistinctValues((item) => item.family));
   populateFilterSelect(
